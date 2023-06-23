@@ -1,5 +1,5 @@
-<div class="container">
-  <h2>Movies</h2>
+<!-- <div class="container">
+  <h2>Clients</h2>
   <div 
   cdkDropList 
   #moviesList="cdkDropList" 
@@ -11,7 +11,7 @@
 </div>
 </div>
 <div class="container">
-  <h2>Movies Watched</h2>
+  <h2>MD1</h2>
   <div 
   cdkDropList 
   #doneMovieList="cdkDropList" 
@@ -21,4 +21,20 @@
   (cdkDropListDropped)="onDrop($event)">
   <div class="movie-block" *ngFor="let moviesWatched of MoviesWatched" cdkDrag>{{moviesWatched}}</div>
 </div>
+</div> -->
+<div cdkDropListGroup>
+  <div class="person" *ngFor="let person of persons">
+    <h3>{{ person.name }}</h3>
+    <div cdkDropList [id]="person.id" [cdkDropListData]="person.tasks" (cdkDropListDropped)="drop($event)">
+      <ng-container *ngFor="let task of person.tasks">
+        <div class="task" [ngClass]="{'task-dropped': task.isDropped}" *ngIf="!task.isDuplicate" cdkDrag [cdkDragData]="task">
+          {{ task.name }}
+          <ng-template cdkDragPreview>
+            <div class="task task-preview">{{ task.name }}</div>
+          </ng-template>
+        </div>
+        <div class="task task-duplicate" *ngIf="task.isDuplicate">{{ task.name }}</div>
+      </ng-container>
+    </div>
+  </div>
 </div>
