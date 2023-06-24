@@ -158,17 +158,18 @@ export class AppComponent {
   //     }, 250);
   //   }
   // }
-  lastDuplicateTask: { container: any, index: number } | null = null;
-
   persons_dupl=this.persons
+  lastDuplicateTask: { container: any, index: number } | null = null;
+duplicates: { [key: string]: { container: any, index: number } | null } = {};
 drop(event: CdkDragDrop<any[]>) {
   if (event.previousContainer === event.container) {
     moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
   } else {
+    const taskId = event.item.data.id;
+
     // Remove the previous duplicate task if it exists
-    if (this.lastDuplicateTask) {
-      this.lastDuplicateTask.container.data.splice(this.lastDuplicateTask.index, 1);
-      this.lastDuplicateTask = null;
+    if (this.duplicates[taskId]) {
+      this.duplicates[taskId]?.container.data.splice(this.duplicates[taskId]?.index, 1);
     }
 
     // Create a duplicate task with a red background at the previous position
@@ -185,12 +186,15 @@ drop(event: CdkDragDrop<any[]>) {
     if (event.container.id === event.item.data.originId) {
       // Remove the duplicate task
       event.previousContainer.data.splice(event.previousIndex, 1);
-      
+
       // Reset the background color of the moved task to white
       event.container.data[event.currentIndex].isDropped = false;
+
+      // Remove the duplicate task information from the dictionary
+      delete this.duplicates[taskId];
     } else {
-      // Store the information about the current duplicate task
-      this.lastDuplicateTask = {
+      // Store the information about the current duplicate task in the duplicates dictionary
+      this.duplicates[taskId] = {
         container: event.previousContainer,
         index: event.previousIndex,
       };
